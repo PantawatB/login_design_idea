@@ -40,3 +40,15 @@
 /Users/hyeonbae/Documents/pantawat/obj/Debug/net5.0/Razor/Views/Student/Index.cshtml.g.cs
 /Users/hyeonbae/Documents/pantawat/obj/Debug/net5.0/Razor/Views/Student/Create.cshtml.g.cs
 /Users/hyeonbae/Documents/pantawat/obj/Debug/net5.0/Razor/Views/Login/Login.cshtml.g.cs
+/Users/hyeonbae/Documents/pantawat/obj/Debug/net5.0/Razor/Views/Login/Zodiac/_Dog.cshtml.g.cs
+/Users/hyeonbae/Documents/pantawat/obj/Debug/net5.0/Razor/Views/Login/Zodiac/_Dragon.cshtml.g.cs
+/Users/hyeonbae/Documents/pantawat/obj/Debug/net5.0/Razor/Views/Login/Zodiac/_Goat.cshtml.g.cs
+/Users/hyeonbae/Documents/pantawat/obj/Debug/net5.0/Razor/Views/Login/Zodiac/_Horse.cshtml.g.cs
+/Users/hyeonbae/Documents/pantawat/obj/Debug/net5.0/Razor/Views/Login/Zodiac/_Monkey.cshtml.g.cs
+/Users/hyeonbae/Documents/pantawat/obj/Debug/net5.0/Razor/Views/Login/Zodiac/_Ox.cshtml.g.cs
+/Users/hyeonbae/Documents/pantawat/obj/Debug/net5.0/Razor/Views/Login/Zodiac/_Pig.cshtml.g.cs
+/Users/hyeonbae/Documents/pantawat/obj/Debug/net5.0/Razor/Views/Login/Zodiac/_Rabbit.cshtml.g.cs
+/Users/hyeonbae/Documents/pantawat/obj/Debug/net5.0/Razor/Views/Login/Zodiac/_Rat.cshtml.g.cs
+/Users/hyeonbae/Documents/pantawat/obj/Debug/net5.0/Razor/Views/Login/Zodiac/_Rooster.cshtml.g.cs
+/Users/hyeonbae/Documents/pantawat/obj/Debug/net5.0/Razor/Views/Login/Zodiac/_Snake.cshtml.g.cs
+/Users/hyeonbae/Documents/pantawat/obj/Debug/net5.0/Razor/Views/Login/Zodiac/_Tiger.cshtml.g.cs

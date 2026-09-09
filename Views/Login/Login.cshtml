@@ -1,6 +1,16 @@
 @{
     ViewData["Title"] = "Login";
     Layout = null;
+
+    var currentYear = 2031;
+    var zodiacAnimals = new[]
+    {
+        "Rat", "Ox", "Tiger", "Rabbit", "Dragon", "Snake",
+        "Horse", "Goat", "Monkey", "Rooster", "Dog", "Pig"
+    };
+    var zodiacIndex = ((currentYear - 2020) % zodiacAnimals.Length + zodiacAnimals.Length)
+                      % zodiacAnimals.Length;
+    var currentZodiac = zodiacAnimals[zodiacIndex];
 }
 
 <!DOCTYPE html>
@@ -405,7 +415,7 @@
 
         .prize-wheel {
             position: absolute;
-            top: 1x;
+            top: 10px;
             right: 10px;
             z-index: 4;
             width: 190px;
@@ -420,24 +430,33 @@
             animation: prizeWheelTurn 22s linear infinite;
         }
 
-        .goat-art {
+        .scene-art,
+        .zodiac-art {
             position: absolute;
             left: 50%;
             bottom: 8px;
-            z-index: 2;
             width: 96%;
             height: auto;
             transform: translateX(-50%);
             overflow: visible;
+        }
+
+        .scene-art {
+            z-index: 2;
+        }
+
+        .zodiac-art {
+            z-index: 3;
+            pointer-events: none;
             filter: drop-shadow(0 22px 22px rgba(82, 54, 39, .08));
         }
 
-        .goat-float {
+        .zodiac-float {
             transform-origin: 55% 68%;
-            animation: goatFloat 5s ease-in-out infinite;
+            animation: zodiacFloat 5s ease-in-out infinite;
         }
 
-        @@keyframes goatFloat {
+        @@keyframes zodiacFloat {
             0%, 100% { transform: translateY(0) rotate(0); }
             50% { transform: translateY(-5px) rotate(.3deg); }
         }
@@ -447,7 +466,7 @@
         }
 
         @@media (prefers-reduced-motion: reduce) {
-            .goat-float,
+            .zodiac-float,
             .prize-wheel-rotor { animation: none; }
         }
 
@@ -479,7 +498,8 @@
                 margin: 0 15px 15px 15px;
             }
 
-            .goat-art {
+            .scene-art,
+            .zodiac-art {
                 width: min(94%, 600px);
                 bottom: 2px;
             }
@@ -547,7 +567,8 @@
                 width: 118px;
             }
 
-            .goat-art {
+            .scene-art,
+            .zodiac-art {
                 width: 113%;
                 bottom: 0;
             }
@@ -720,16 +741,8 @@
                 <path d="M80 17h40l-20 39z" fill="#302b29" stroke="#fffaf2" stroke-width="3" stroke-linejoin="round" />
             </svg>
 
-            <svg class="goat-art" viewBox="0 0 620 570" role="img" aria-label="Japanese-inspired New Year goat illustration">
+            <svg class="scene-art" viewBox="0 0 620 570" aria-hidden="true">
                 <defs>
-                    <linearGradient id="goatCoat" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0" stop-color="#fffdf9" />
-                        <stop offset="1" stop-color="#eee4d8" />
-                    </linearGradient>
-                    <linearGradient id="hantenRed" x1="0" y1="0" x2="1" y2="1">
-                        <stop offset="0" stop-color="#d83a43" />
-                        <stop offset="1" stop-color="#aa202a" />
-                    </linearGradient>
                     <linearGradient id="giftGold" x1="0" y1="0" x2="1" y2="1">
                         <stop offset="0" stop-color="#f1cf7b" />
                         <stop offset="1" stop-color="#ce9238" />
@@ -778,52 +791,7 @@
                     </g>
                 </g>
 
-                <g class="goat-float">
-                    <!-- Ground shadow -->
-                    <ellipse cx="329" cy="505" rx="155" ry="18" fill="#6d4a39" opacity=".10" />
-
-                    <!-- Legs -->
-                    <path d="M270 430v58M382 430v58" stroke="#d8c7b7" stroke-width="29" stroke-linecap="round" />
-                    <path d="M255 490h33M366 490h34" stroke="#5f4840" stroke-width="13" stroke-linecap="round" />
-
-                    <!-- Fluffy body -->
-                    <path d="M226 426c-34-10-39-50-14-68-12-29 12-59 44-58 9-31 48-43 73-22 25-25 67-14 76 17 34-2 56 29 43 59 28 17 22 58-10 70-2 31-38 46-63 27-19 25-60 26-81 3-29 20-66 4-68-28z"
-                          fill="url(#goatCoat)" stroke="#e2d7cb" stroke-width="4" />
-
-                    <!-- Red Japanese hanten bib -->
-                    <path d="M266 343c28 18 91 18 119-2l17 86c-43 29-111 28-153-1z" fill="url(#hantenRed)" />
-                    <path d="M327 356v89" stroke="#e8bd67" stroke-width="7" opacity=".9" />
-                    <g fill="none" stroke="#f2cf82" stroke-width="2.5" opacity=".72">
-                        <path d="M278 381l17-10 17 10-17 10zM295 371v20M278 381h34" />
-                        <path d="M345 405l17-10 17 10-17 10zM362 395v20M345 405h34" />
-                    </g>
-
-                    <!-- Ears and curled horns -->
-                    <path d="M267 278c-39-14-51 13-24 33 15 11 30 0 39-15M384 278c39-14 51 13 24 33-15 11-30 0-39-15" fill="#d8bca4" />
-                    <path d="M278 270c-42-7-46-55-10-66 25-8 41 16 27 36-8 12-23 9-25-2M375 270c42-7 46-55 10-66-25-8-41 16-27 36 8 12 23 9 25-2"
-                          fill="none" stroke="#c99443" stroke-width="13" stroke-linecap="round" />
-
-                    <!-- Head and wool -->
-                    <ellipse cx="326" cy="292" rx="74" ry="71" fill="#d9bfa7" />
-                    <path d="M264 257c-13-20 6-42 29-34 8-24 41-28 53-8 21-12 46 7 38 30 20 9 16 39-8 42-29-20-76-21-104-2-14-3-18-19-8-28z"
-                          fill="url(#goatCoat)" stroke="#e2d7cb" stroke-width="3" />
-
-                    <!-- Face -->
-                    <path d="M290 297c10-9 22-9 31 0M342 297c10-9 22-9 31 0" fill="none" stroke="#493d39" stroke-width="4" stroke-linecap="round" />
-                    <circle cx="306" cy="302" r="5" fill="#493d39" />
-                    <circle cx="357" cy="302" r="5" fill="#493d39" />
-                    <ellipse cx="331" cy="327" rx="27" ry="20" fill="#ead5c1" />
-                    <path d="M331 320v8M319 335c8 8 18 8 25 0" fill="none" stroke="#79534a" stroke-width="3.5" stroke-linecap="round" />
-                    <circle cx="286" cy="326" r="8" fill="#d97879" opacity=".35" />
-                    <circle cx="376" cy="326" r="8" fill="#d97879" opacity=".35" />
-
-                    <!-- Mizuhiki-style collar and bell -->
-                    <path d="M278 342c30 20 78 20 106-1" fill="none" stroke="#a9212c" stroke-width="10" stroke-linecap="round" />
-                    <circle cx="332" cy="359" r="13" fill="#deb357" />
-                    <path d="M325 358h14M332 361v6" stroke="#9c6d2d" stroke-width="2.5" stroke-linecap="round" />
-                </g>
-
-                <!-- Additional gift on the goat's left -->
+                <!-- Additional gift on the animal's left -->
                 <g>
                     <ellipse cx="123" cy="505" rx="62" ry="11" fill="#6d4a39" opacity=".09" />
                     <rect x="82" y="432" width="82" height="65" rx="9" fill="#c92d37" />
@@ -853,6 +821,8 @@
                     <path d="M-55 555q35-50 70 0q35-50 70 0q35-50 70 0q35-50 70 0q35-50 70 0q35-50 70 0q35-50 70 0q35-50 70 0q35-50 70 0q35-50 70 0" />
                 </g>
             </svg>
+
+            @await Html.PartialAsync($"Zodiac/_{currentZodiac}")
         </section>
 
     </main>
