@@ -1,52 +1,515 @@
-﻿@* @model IEnumerable<User> *@
-
-<div class="container mt-4">
-
-    <div class="d-flex justify-content-between mb-3">
-        <h2>Users</h2>
-
-        <a asp-action="Create" class="btn btn-primary">
-            + Add User
-        </a>
-    </div>
-
-    <table class="table table-bordered table-striped">
-
-        <thead class="table-dark">
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-
-        <tbody>
-
-        @* @foreach (var user in Model) *@
-        {
-            <tr>
-                <td>user.Id</td>
-                <td>user.Name</td>
-                <td>user.Email</td>
-
-                <td>
-                    <a asp-action="Edit"
-                      
-                       class="btn btn-warning btn-sm">
-                        Edit
-                    </a>
-
-                    <a asp-action="Delete"
-                      
-                       class="btn btn-danger btn-sm">
-                        Delete
-                    </a>
-                </td>
-            </tr>
+@{
+    ViewData["Title"] = "New Year Lucky Draw";
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>New Year Lucky Draw 2026</title>
+    <style>
+        :root {
+            --red: #df0712;
+            --red-dark: #b90912;
+            --ink: #071722;
+            --muted: #858585;
+            --line: rgba(7, 23, 34, .13);
+            --paper: #fcf9f5;
         }
 
-        </tbody>
+        * { box-sizing: border-box; }
+        html, body { min-height: 100%; }
 
-    </table>
-</div>
+        body {
+            margin: 0;
+            min-width: 320px;
+            color: var(--ink);
+            background: var(--paper);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Tahoma, sans-serif;
+        }
+
+        button, select { font: inherit; }
+
+        .draw-page {
+            position: relative;
+            isolation: isolate;
+            min-height: 100vh;
+            overflow: hidden;
+            display: grid;
+            grid-template-rows: auto auto 1fr auto;
+            padding: 38px 4.7vw 34px;
+            background: url('/images/lucky-draw-background.png') center bottom / cover no-repeat;
+        }
+
+        .draw-page::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            z-index: -1;
+            pointer-events: none;
+            background: linear-gradient(to bottom, rgba(252,249,245,.18), transparent 38%);
+        }
+
+        .topbar {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+        }
+
+        .brand {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .flag-mark {
+            width: 58px;
+            height: 44px;
+            display: grid;
+            place-items: center;
+            border: 1px solid #d9d9d9;
+            border-radius: 5px;
+            background: rgba(255,255,255,.9);
+            box-shadow: 0 2px 5px rgba(0,0,0,.05);
+        }
+
+        .flag-mark i {
+            width: 23px;
+            height: 23px;
+            border-radius: 50%;
+            background: var(--red);
+        }
+
+        .brand-title {
+            margin-top: 1px;
+            font-size: 14px;
+            line-height: 1.18;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+        }
+
+        .brand-subtitle {
+            margin-top: 5px;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .year-block { text-align: right; }
+        .year-number { font-size: 20px; font-weight: 750; letter-spacing: 17px; white-space: nowrap; }
+        .year-number em { color: var(--red); font-style: normal; }
+        .year-copy { margin-top: 8px; color: var(--muted); font-size: 11px; }
+        .year-block::after { content: ""; display: block; width: 42px; height: 2px; margin: 15px 0 0 auto; background: var(--red); }
+
+        .hero-head {
+            margin: -4px auto 0;
+            text-align: center;
+        }
+
+        .hero-head h1 {
+            margin: 0;
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: clamp(52px, 6.4vw, 94px);
+            font-weight: 700;
+            line-height: .9;
+            letter-spacing: -3px;
+        }
+
+        .hero-head h2 {
+            margin: 7px 0 0;
+            color: var(--red);
+            font-size: clamp(18px, 2vw, 28px);
+            line-height: 1;
+            letter-spacing: 12px;
+            text-indent: 12px;
+        }
+
+        .hero-head p {
+            margin: 11px 0 0;
+            color: #8b8b8b;
+            font-size: 13px;
+            font-weight: 650;
+            letter-spacing: 4px;
+        }
+
+        .hero-head::after { content: ""; display: block; width: 46px; height: 2px; margin: 17px auto 0; background: var(--red); }
+
+        .draw-workspace {
+            position: relative;
+            min-height: 560px;
+        }
+
+        .setting-row {
+            width: min(1060px, 76vw);
+            margin: 26px auto 0;
+            display: grid;
+            grid-template-columns: 1fr 1.08fr .97fr;
+            gap: 20px;
+        }
+
+        .setting-card {
+            position: relative;
+            min-width: 0;
+            height: 80px;
+            display: grid;
+            grid-template-columns: 48px 1fr 20px;
+            align-items: center;
+            gap: 11px;
+            padding: 12px 20px;
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            background: rgba(255,255,255,.88);
+            box-shadow: 0 3px 12px rgba(34, 26, 20, .035);
+            backdrop-filter: blur(7px);
+        }
+
+        .setting-icon {
+            width: 42px;
+            text-align: center;
+            color: var(--ink);
+            font-size: 31px;
+            line-height: 1;
+        }
+
+        .setting-card:first-child .setting-icon { color: var(--red); }
+
+        .setting-text { min-width: 0; }
+        .setting-label { display: block; margin-bottom: 2px; font-size: 12px; }
+
+        .setting-card select {
+            width: 100%;
+            padding: 0;
+            appearance: none;
+            border: 0;
+            outline: 0;
+            color: var(--ink);
+            background: transparent;
+            font-size: 17px;
+            font-weight: 760;
+            cursor: pointer;
+        }
+
+        .select-arrow { font-size: 20px; transform: translateY(-2px); pointer-events: none; }
+
+        .stock-value {
+            color: var(--red);
+            font-size: 25px;
+            font-weight: 800;
+            line-height: 1;
+        }
+
+        .draw-center {
+            position: absolute;
+            top: 156px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .draw-button {
+            position: relative;
+            width: clamp(230px, 19vw, 300px);
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 8px solid #efbf77;
+            border-radius: 50%;
+            outline: 2px solid #c23c23;
+            outline-offset: -13px;
+            color: #fff;
+            background: linear-gradient(145deg, #ef3a40 0%, #d91620 47%, #ac0710 100%);
+            box-shadow: 0 19px 36px rgba(166, 7, 16, .25), inset 0 10px 18px rgba(255,255,255,.18), inset 0 -12px 22px rgba(93,0,5,.18);
+            cursor: pointer;
+            transition: transform .2s ease, box-shadow .2s ease;
+        }
+
+        .draw-button::after {
+            content: "";
+            position: absolute;
+            inset: 13px;
+            border: 1px solid rgba(255,255,255,.38);
+            border-radius: 50%;
+        }
+
+        .draw-button:hover { transform: translateY(-3px); box-shadow: 0 24px 42px rgba(166,7,16,.29), inset 0 10px 18px rgba(255,255,255,.18), inset 0 -12px 22px rgba(93,0,5,.18); }
+        .draw-button:active { transform: translateY(0) scale(.99); }
+        .draw-button:disabled { cursor: wait; }
+        .gift-icon { margin-bottom: 11px; font-size: 46px; line-height: 1; }
+        .draw-label { font-size: clamp(28px, 2.8vw, 42px); font-weight: 790; line-height: 1; }
+        .draw-subtitle { margin-top: 17px; font-size: 10px; font-weight: 800; letter-spacing: 4px; }
+
+        .draw-center.is-drawing .draw-button { animation: drawPulse .42s ease-in-out infinite alternate; }
+        .result-name { display: none; max-width: 78%; text-align: center; font-size: clamp(18px,2vw,28px); font-weight: 780; line-height: 1.25; }
+        .draw-center.has-winner .gift-icon, .draw-center.has-winner .draw-label, .draw-center.has-winner .draw-subtitle { display: none; }
+        .draw-center.has-winner .result-name { display: block; }
+
+        .good-luck {
+            position: absolute;
+            right: 3vw;
+            top: 344px;
+            width: 200px;
+            transform: rotate(-8deg);
+            color: #686868;
+            font-family: "Segoe Script", "Brush Script MT", cursive;
+            font-size: 30px;
+            line-height: 1.03;
+            text-align: center;
+        }
+
+        .good-luck::after { content: ""; display: block; width: 65px; height: 2px; margin: 12px auto 0; background: var(--red); }
+
+        .latest-panel {
+            min-height: 72px;
+            display: grid;
+            grid-template-columns: 210px 1fr auto;
+            align-items: center;
+            gap: 24px;
+            padding: 12px 24px;
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            background: rgba(255,255,255,.9);
+            box-shadow: 0 5px 18px rgba(34,26,20,.04);
+            backdrop-filter: blur(8px);
+        }
+
+        .latest-title { padding-right: 22px; border-right: 1px solid var(--line); font-size: 13px; font-weight: 760; }
+        .latest-title span { margin-right: 11px; font-size: 20px; }
+        .winner-strip { min-width: 0; display: grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap: 18px; }
+        .winner-chip { min-width: 0; color: #676767; font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .winner-chip.empty { height: 5px; border-radius: 99px; background: #e3e3e3; }
+        .history-button { border: 0; color: var(--ink); background: transparent; font-size: 12px; cursor: pointer; white-space: nowrap; }
+        .history-button:hover { color: var(--red); }
+
+        .result-dialog {
+            position: fixed;
+            inset: 0;
+            z-index: 20;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: rgba(252,249,245,.72);
+            backdrop-filter: blur(9px);
+        }
+
+        .result-dialog.open { display: flex; }
+        .result-card { width: min(720px,100%); max-height: 80vh; overflow: auto; padding: 36px; border: 1px solid var(--line); border-radius: 14px; background:#fff; box-shadow:0 28px 80px rgba(50,35,25,.18); text-align:center; }
+        .result-card h3 { margin:0; font-family:Georgia,"Times New Roman",serif; font-size:42px; }
+        .result-card > p { margin:8px 0 24px; color:var(--muted); font-size:13px; }
+        .result-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px; text-align:left; }
+        .result-item { padding:13px 15px; border:1px solid #ece6df; border-radius:8px; font-size:13px; font-weight:700; }
+        .result-item b { display:inline-grid; place-items:center; width:26px; height:26px; margin-right:9px; border-radius:50%; color:var(--red); background:#fff0f0; font-size:9px; }
+        .close-result { margin-top:24px; padding:11px 24px; border:0; border-radius:7px; color:#fff; background:var(--red); font-weight:700; cursor:pointer; }
+
+        @@keyframes drawPulse { to { transform: scale(1.035); filter: brightness(1.05); } }
+
+        @@media (max-width: 900px) {
+            .draw-page { padding: 28px 24px 24px; background-position: 42% bottom; }
+            .setting-row { width: 100%; grid-template-columns: 1fr 1fr 160px; gap: 10px; }
+            .setting-card { padding: 10px 13px; }
+            .draw-workspace { min-height: 540px; }
+            .good-luck { display: none; }
+            .latest-panel { grid-template-columns: 180px 1fr; }
+            .history-button { display: none; }
+        }
+
+        @@media (max-width: 650px) {
+            .draw-page { min-height: 100svh; padding: 20px 16px; background-position: 38% bottom; }
+            .year-block { display: none; }
+            .brand-subtitle { display: none; }
+            .hero-head { margin-top: 28px; }
+            .hero-head h1 { font-size: 54px; }
+            .hero-head h2 { font-size: 17px; letter-spacing: 8px; text-indent: 8px; }
+            .hero-head p { font-size: 10px; letter-spacing: 2px; }
+            .setting-row { margin-top: 25px; grid-template-columns: 1fr 1fr; }
+            .setting-card { height: 67px; grid-template-columns: 34px 1fr 15px; }
+            .setting-card:last-child { grid-column: 1 / -1; width: 50%; justify-self: center; }
+            .setting-icon { width: 30px; font-size: 24px; }
+            .setting-card select { font-size: 14px; }
+            .setting-label { font-size: 10px; }
+            .draw-workspace { min-height: 455px; }
+            .draw-center { top: 246px; }
+            .draw-button { width: 210px; }
+            .latest-panel { grid-template-columns: 1fr; gap: 10px; }
+            .latest-title { padding: 0 0 10px; border-right: 0; border-bottom: 1px solid var(--line); }
+            .winner-strip { grid-template-columns: repeat(2,minmax(0,1fr)); }
+            .winner-chip:nth-child(n+3) { display:none; }
+            .result-grid { grid-template-columns:1fr; }
+        }
+
+        @@media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
+        }
+    </style>
+</head>
+<body>
+    <main class="draw-page">
+        <header class="topbar">
+            <div class="brand">
+                <div class="flag-mark" aria-hidden="true"><i></i></div>
+                <div>
+                    <div class="brand-title">Happy<br />New Year</div>
+                    <div class="brand-subtitle">A Brighter Tomorrow Together</div>
+                </div>
+            </div>
+            <div class="year-block">
+                <div class="year-number">202<em>6</em></div>
+                <div class="year-copy">Together for a Brighter Tomorrow</div>
+            </div>
+        </header>
+
+        <section class="hero-head">
+            <h1>New Year</h1>
+            <h2>LUCKY DRAW</h2>
+            <p>Good People&nbsp;&nbsp; Great Company</p>
+        </section>
+
+        <section class="draw-workspace" aria-label="พื้นที่สุ่มรางวัล">
+            <div class="setting-row">
+                <label class="setting-card">
+                    <span class="setting-icon" aria-hidden="true">🎁</span>
+                    <span class="setting-text">
+                        <span class="setting-label">ประเภทรางวัล</span>
+                        <select id="prizeType"><option value="grand">รางวัลใหญ่</option><option value="small">รางวัลเล็ก</option></select>
+                    </span>
+                    <span class="select-arrow" aria-hidden="true">⌄</span>
+                </label>
+                <label class="setting-card">
+                    <span class="setting-icon" aria-hidden="true">◆</span>
+                    <span class="setting-text">
+                        <span class="setting-label">ชื่อรางวัล</span>
+                        <select id="prizeName"></select>
+                    </span>
+                    <span class="select-arrow" aria-hidden="true">⌄</span>
+                </label>
+                <label class="setting-card">
+                    <span class="setting-icon" aria-hidden="true">▰</span>
+                    <span class="setting-text">
+                        <span class="setting-label">จำนวนรางวัล</span>
+                        <select id="prizeCount"><option value="1">1</option><option value="5" selected>5</option><option value="10">10</option><option value="20">20</option></select>
+                    </span>
+                    <span class="select-arrow" aria-hidden="true">⌄</span>
+                </label>
+            </div>
+
+            <div class="draw-center" id="drawCenter">
+                <button type="button" class="draw-button" id="drawButton" aria-label="เริ่มสุ่มรางวัล">
+                    <span class="gift-icon" aria-hidden="true">🎁</span>
+                    <span class="draw-label">สุ่มรางวัล</span>
+                    <span class="draw-subtitle">LET'S GO!</span>
+                    <span class="result-name" id="resultName"></span>
+                </button>
+            </div>
+            <div class="good-luck" aria-hidden="true">Good Luck<br />To Everyone!</div>
+        </section>
+
+        <section class="latest-panel" aria-label="ผู้โชคดีล่าสุด">
+            <div class="latest-title"><span aria-hidden="true">♛</span>ผู้โชคดีล่าสุด</div>
+            <div class="winner-strip" id="winnerStrip">
+                <span class="winner-chip empty"></span><span class="winner-chip empty"></span><span class="winner-chip empty"></span><span class="winner-chip empty"></span><span class="winner-chip empty"></span>
+            </div>
+            <button type="button" class="history-button" id="historyButton">ดูประวัติทั้งหมด&nbsp; →</button>
+        </section>
+    </main>
+
+    <div class="result-dialog" id="resultDialog" role="dialog" aria-modal="true" aria-labelledby="resultTitle">
+        <div class="result-card">
+            <h3 id="resultTitle">Congratulations!</h3>
+            <p id="resultSummary"></p>
+            <div class="result-grid" id="resultGrid"></div>
+            <button type="button" class="close-result" id="closeResult">สุ่มรางวัลถัดไป</button>
+        </div>
+    </div>
+
+    <script>
+        (() => {
+            const prizes = {
+                grand: ["iPhone 16 Pro", "แพ็กเกจท่องเที่ยวญี่ปุ่น", "ทองคำหนัก 1 บาท"],
+                small: ["AirPods Pro", "บัตรกำนัล 3,000 บาท", "เครื่องชงกาแฟ", "ลำโพง Bluetooth"]
+            };
+            const people = ["กมลชนก วัฒนกิจ","กิตติพงศ์ ตั้งวรชัย","กุลธิดา พูนทรัพย์","ขวัญฤดี แสงทอง","จิรภัทร นาคสกุล","ชนากานต์ ภักดีวงศ์","ณัฐชนน ศรีสวัสดิ์","ณิชารีย์ อรุณรุ่ง","ธนกฤต วงศ์สุวรรณ","ธัญชนก มณีรัตน์","นภัสกร บุญช่วย","ปณิธาน เจริญสุข","ปาริฉัตร แก้วประเสริฐ","พงศกร ธรรมรักษ์","พิมพ์ชนก ตันติเวช","ภัทรวดี อินทรา","ภูมิพัฒน์ ชูศักดิ์","มณีรัตน์ พรหมมา","รวิศ ทองประดับ","ลลิตา วงศ์ไพบูลย์","วรเมธ ประภากร","วริศรา จันทร์เพ็ญ","ศรัณย์ วิไลพร","ศิรินภา ตั้งมั่น","สิรวิชญ์ พัฒนากุล","สุชาดา นิ่มนวล","อชิรญา เตชะวงศ์","อภิรักษ์ สุขสวัสดิ์","อริสรา วรรณศรี","เอกภพ เกียรติขจร"];
+
+            const type = document.getElementById("prizeType");
+            const prize = document.getElementById("prizeName");
+            const count = document.getElementById("prizeCount");
+            const button = document.getElementById("drawButton");
+            const center = document.getElementById("drawCenter");
+            const resultName = document.getElementById("resultName");
+            const strip = document.getElementById("winnerStrip");
+            const dialog = document.getElementById("resultDialog");
+            const grid = document.getElementById("resultGrid");
+            const summary = document.getElementById("resultSummary");
+            const historyButton = document.getElementById("historyButton");
+            const closeButton = document.getElementById("closeResult");
+            let history = [];
+            let drawing = false;
+
+            function fillPrizes() {
+                prize.innerHTML = prizes[type.value].map(item => `<option>${item}</option>`).join("");
+            }
+
+            function pick(amount) {
+                const pool = [...people];
+                for (let i = pool.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [pool[i], pool[j]] = [pool[j], pool[i]];
+                }
+                return pool.slice(0, amount);
+            }
+
+            function updateStrip() {
+                const latest = history.slice(0, 5);
+                strip.innerHTML = Array.from({ length: 5 }, (_, index) => latest[index]
+                    ? `<span class="winner-chip">${latest[index]}</span>`
+                    : `<span class="winner-chip empty"></span>`).join("");
+            }
+
+            function openResults(winners, prizeName) {
+                summary.textContent = `${prizeName} · ผู้โชคดี ${winners.length} คน`;
+                grid.innerHTML = winners.map((name, index) => `<div class="result-item"><b>${String(index + 1).padStart(2, "0")}</b>${name}</div>`).join("");
+                dialog.classList.add("open");
+            }
+
+            function draw() {
+                if (drawing) return;
+                drawing = true;
+                const amount = Number(count.value);
+                center.classList.remove("has-winner");
+                center.classList.add("is-drawing");
+                button.disabled = true;
+                let ticks = 0;
+                const ticker = setInterval(() => {
+                    resultName.textContent = people[Math.floor(Math.random() * people.length)];
+                    center.classList.add("has-winner");
+                    ticks++;
+                    if (ticks >= 12) clearInterval(ticker);
+                }, 90);
+
+                setTimeout(() => {
+                    clearInterval(ticker);
+                    const winners = pick(amount);
+                    resultName.textContent = amount === 1 ? winners[0] : `พบผู้โชคดี ${amount} คน`;
+                    history = [...winners, ...history];
+                    updateStrip();
+                    center.classList.remove("is-drawing");
+                    button.disabled = false;
+                    drawing = false;
+                    if (amount > 1) openResults(winners, prize.value);
+                }, 1350);
+            }
+
+            type.addEventListener("change", fillPrizes);
+            button.addEventListener("click", draw);
+            historyButton.addEventListener("click", () => { if (history.length) openResults(history, "ประวัติผู้โชคดีทั้งหมด"); });
+            closeButton.addEventListener("click", () => { dialog.classList.remove("open"); center.classList.remove("has-winner"); });
+            dialog.addEventListener("click", event => { if (event.target === dialog) closeButton.click(); });
+            document.addEventListener("keydown", event => { if (event.key === "Escape") closeButton.click(); });
+            fillPrizes();
+        })();
+    </script>
+</body>
+</html>
